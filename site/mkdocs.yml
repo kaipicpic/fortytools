@@ -1,0 +1,35 @@
+site_name: fortytools
+theme:
+  name: terminal
+  palette: dark
+  features:
+    - navigation.side.hide
+    - navigation.top.search_button.hide
+nav:
+    - home: 'index.md'
+    - man: 'man.md'
+markdown_extensions:
+  # Python Markdown  
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - meta
+  # PyMdown Extensions
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.snippets:
+      base_path: 
+        - docs
+  - pymdownx.blocks.details:
+      types:
+        - name: info 
+          class: terminal-alert
+          title: Info
+        - name: warning
+          class: 'terminal-alert terminal-alert-error'
+          title: Warning
+        - name: important
+          class: 'terminal-alert terminal-alert-primary'
+          title: Important

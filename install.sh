@@ -2,10 +2,11 @@
 
 set -e
 
-REPO_URL="https://github.com/kaipicpic/fortytools"
+REPO_URL="https://kaipicpic.github.io/fortytools"
 INSTALL_DIR="$HOME/fortytools"
 SCRIPTS=(
   feval
+  fpush
 )
 
 echo "[*] Installing FortyTools to $INSTALL_DIR..."

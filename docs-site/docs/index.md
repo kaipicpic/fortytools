@@ -15,4 +15,5 @@ run this command in your terminal to install fortytools:
 
 * `feval` `<git link>` - make evaluations go brrr.
 * `fpush` `<commit message (optional)>` - add, commit and push in one go.
-* `feval` - make evaluations go brrr.
+
+more commands are to come, so stay tuned!!

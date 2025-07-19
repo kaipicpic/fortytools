@@ -2,7 +2,7 @@
 
 set -e
 
-REPO_URL="https://kaipicpic.github.io/fortytools"
+REPO_URL="https://github.com/kaipicpic/fortytools"
 INSTALL_DIR="$HOME/fortytools"
 SCRIPTS=(
   feval

@@ -8,7 +8,7 @@ made with ❤️ by [kaii <3](https://profile.intra.42.fr/users/tobertha).
 
 run this command in your terminal to install fortytools:
 <br>
-`curl -s 'https://kaipicpic.github.io/fortytools/install.sh' | bash`
+`curl -s 'https://raw.githubusercontent.com/kaipicpic/fortytools/refs/heads/main/install.sh' | bash`
 <br>
 
 ## Commands

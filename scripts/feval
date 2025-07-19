@@ -1,0 +1,134 @@
+#!/bin/bash
+
+#feval - evaluate people faster
+
+set -euo pipefail
+
+CONFIG_FILE="$HOME/fortytools/feval.conf"
+WORKDIR="$HOME/fortytools/fevaltemp"
+FAVORITE_EDITOR=""
+
+usage() {
+    echo "usage:"
+    echo "  feval <git_url>     clone and check norminette"
+    echo "  feval config        choose preferred code editor"
+    exit 1
+}
+
+choose_editor() {
+    echo "Choose your favorite editor:"
+    echo
+    echo "1) VSCode"
+    echo "2) Vim"
+    echo
+    read -rp "Enter choice [1-2]: " choice
+
+    case "$choice" in
+        1)
+            FAVORITE_EDITOR="code"
+            ;;
+        2)
+            FAVORITE_EDITOR="vim"
+            ;;
+        *)
+            echo "Invalid choice."
+            exit 1
+            ;;
+    esac
+
+    echo "FAVORITE_EDITOR=$FAVORITE_EDITOR" > "$CONFIG_FILE"
+    echo
+    echo "[*] Saved your choice to $CONFIG_FILE"
+}
+
+load_config() {
+    if [[ -f "$CONFIG_FILE" ]]; then
+        source "$CONFIG_FILE"
+    else
+        choose_editor
+    fi
+}
+
+run_norminette() {
+    echo
+    echo "[*] Running norminette in $WORKDIR"
+    if norminette "$WORKDIR"; then
+        echo
+        echo "[*] Norm is OK, no errors found by norminette."
+    else
+        echo
+        echo "[!] Norm error, check the terminal output for norm errors."
+    fi
+}
+
+launch_editor() {
+    echo "[*] Launching editor: $FAVORITE_EDITOR"
+    if [[ "$FAVORITE_EDITOR" == "code" ]]; then
+        code "$WORKDIR"
+    elif [[ "$FAVORITE_EDITOR" == "vim" ]]; then
+        if command -v gnome-terminal &>/dev/null; then
+            gnome-terminal -- bash -c "cd '$WORKDIR'; vim .; exec bash"
+        elif command -v x-terminal-emulator &>/dev/null; then
+            x-terminal-emulator -e "bash -c 'cd \"$WORKDIR\"; vim .; exec bash'"
+        else
+            echo "[!] No supported terminal found. Opening vim in current shell."
+            cd "$WORKDIR" && vim .
+        fi
+    else
+        echo "[!] Unknown editor. Edit your config with: feval config"
+    fi
+}
+
+finish() {
+    if [[ -d "$WORKDIR" ]]; then
+        rm -rf "$WORKDIR"
+        echo "[*] Removed $WORKDIR"
+    else
+        echo "[!] Nothing to clean. $WORKDIR not found."
+    fi
+}
+
+main() {
+    mkdir -p ~/fortytools
+    if [[ $# -eq 0 ]]; then
+        usage
+    fi
+
+    case "$1" in
+        finish)
+            finish
+            exit 0
+            ;;
+        config)
+            choose_editor
+            exit 0
+            ;;
+        *)
+            GIT_URL="$1"
+            ;;
+    esac
+
+    load_config
+    echo
+    echo "[*] Cloning $GIT_URL"
+    rm -rf "$WORKDIR"
+    mkdir -p "$(dirname "$WORKDIR")"
+    git clone "$GIT_URL" "$WORKDIR" || {
+        echo
+        echo "[!] Clone failed, check the logs."
+        exit 1
+    }
+    echo
+    echo "[*] Showing cloned files."
+    tree -a -I '.git' "$WORKDIR"
+    run_norminette
+    echo
+    read -p "Press [ENTER] to launch your code editor."
+    echo
+    launch_editor
+    echo
+    read -p "Press [ENTER] to delete the folder, or [CTRL] + [C] to cancel."
+    finish
+}
+
+main "$@"

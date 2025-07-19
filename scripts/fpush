@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#fpush - push your stuff faster
+
+set -euo pipefail
+
+usage() {
+    echo "usage:"
+    echo "  fpush <commit-message>(optional)     add, commit, and push everything in the current repo."
+    exit 1
+}
+
+main() {
+    if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+        usage
+    fi
+
+    if ! git_root=$(git rev-parse --show-toplevel 2>/dev/null); then
+        echo "[!] Error: Not inside a Git repository." >&2
+        exit 1
+    fi
+
+    cd "$git_root"
+
+    commit_msg="${1:-pushed using fpush}"
+
+    echo "[*] Working in repo: $git_root"
+    echo "[*] Commit message: \"$commit_msg\""
+
+    git add .
+    git commit -m "$commit_msg"
+    git push
+}
+
+main "$@"
